@@ -32,6 +32,8 @@ public class CharacterControllerLogic : MonoBehaviour
 	[SerializeField] private float directionDampTime = 0.25f;
 	[SerializeField] private float directionSpeed = 3.0f;
 	[SerializeField] private ThirdPersonCamera gamecam;
+
+	// camera orbit (when holding left/right)
 	[SerializeField] private float rotationDegreesPerSecond = 120f;
 	
 	private float speed = 0.0f;
@@ -92,11 +94,6 @@ public class CharacterControllerLogic : MonoBehaviour
 		// convert joystick input in WorldSpace coordinates
 		Vector3 moveDirection = referentialShift * stickDirection;
 		Vector3 axisSign = Vector3.Cross(moveDirection, rootDirection);
-		
-		Debug.DrawRay(new Vector3(root.position.x, root.position.y + 2f, root.position.z), moveDirection, Color.green);
-		Debug.DrawRay(new Vector3(root.position.x, root.position.y + 2f, root.position.z), axisSign, Color.red);
-		Debug.DrawRay(new Vector3(root.position.x, root.position.y + 2f, root.position.z), rootDirection, Color.magenta);
-//		Debug.DrawRay(new Vector3(root.position.x, root.position.y + 2f, root.position.z), stickDirection, Color.blue);
 		
 		float angleRootToMove = Vector3.Angle(rootDirection, moveDirection) * (axisSign.y >= 0 ? -1f : 1f);
 		

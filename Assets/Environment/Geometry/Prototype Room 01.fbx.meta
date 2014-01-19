@@ -1,20 +1,18 @@
 fileFormatVersion: 2
-guid: d4fb977d747bb9c4d8ea60911ec249c5
+guid: 15172bc58c85a14498b459ba3d7015e9
 ModelImporter:
   serializedVersion: 16
   fileIDToRecycleName:
-    100000: //RootNode
-    100002: Main
-    100004: Roof
-    400000: //RootNode
-    400002: Main
-    400004: Roof
-    2300000: Main
-    2300002: Roof
-    3300000: Main
-    3300002: Roof
-    4300000: Main
-    4300002: Roof
+    100000: Mesh1
+    100002: //RootNode
+    100004: Group1
+    400000: Mesh1
+    400002: //RootNode
+    400004: Group1
+    2300000: Mesh1
+    3300000: Mesh1
+    4300000: Mesh1
+    6400000: Mesh1
     9500000: //RootNode
   materials:
     importMaterials: 1
@@ -34,9 +32,9 @@ ModelImporter:
     isReadable: 1
   meshes:
     lODScreenPercentages: []
-    globalScale: 3
+    globalScale: .0225000009
     meshCompression: 0
-    addColliders: 0
+    addColliders: 1
     importBlendShapes: 1
     swapUVChannels: 0
     generateSecondaryUV: 0
@@ -52,7 +50,7 @@ ModelImporter:
     splitTangentsAcrossUV: 1
     normalImportMode: 0
     tangentImportMode: 1
-  importAnimation: 0
+  importAnimation: 1
   copyAvatar: 0
   humanDescription:
     human: []
@@ -66,6 +64,6 @@ ModelImporter:
     feetSpacing: 0
     rootMotionBoneName: 
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 0
-  additionalBone: 1
+  animationType: 2
+  additionalBone: 0
   userData: 
