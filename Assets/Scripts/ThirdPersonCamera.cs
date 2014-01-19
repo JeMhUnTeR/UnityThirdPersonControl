@@ -38,16 +38,21 @@ public class ThirdPersonCamera : MonoBehaviour {
 	[SerializeField] private float distanceUp = 30f;
 	[SerializeField] private float smooth = 1f;
 	[SerializeField] private Transform followXForm;
-	
+	[SerializeField] private CharacterControllerLogic follow;
+
 	// camera targeting
 	[SerializeField] private float widescreen = 0.2f;
 	[SerializeField] private float targetingTime = 0.5f;
+	[SerializeField] private float firstPersonThreshold = 0.5f;
 
 	private Vector3 lookDir;
 	private Vector3 targetPosition;
 	private BarsEffect barEffect;
 	private CamStates camState = CamStates.Behind;
 	private CameraPosition firstPersonCamPos;
+	private float xAxisRot = 0.0f;
+	private float lookWeight;
+	private float targetingThreshold = 0.01f;
 
 
 	// camera states
@@ -64,6 +69,8 @@ public class ThirdPersonCamera : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+
+		follow = GameObject.FindGameObjectWithTag("Player").GetComponent<CharacterControllerLogic>();
 		followXForm = GameObject.FindGameObjectWithTag("Player").transform;
 		lookDir = followXForm.forward;
 
@@ -73,34 +80,52 @@ public class ThirdPersonCamera : MonoBehaviour {
 		firstPersonCamPos = new CameraPosition();
 		firstPersonCamPos.Init("First Person Camera", new Vector3(0f, 0.1f, 0.2f), new GameObject().transform, followXForm);
 	}
-	
-	// Update is called once per frame
-	void Update () {
-
-	}
 
 	void LateUpdate () {
+		float lookX = Input.GetAxis("LookX");
+		float lookY = Input.GetAxis("LookY");
+		float moveX = Input.GetAxis("Horizontal");
+		float moveY = Input.GetAxis("Vertical");
+
 		Vector3 characterOffset = followXForm.position + new Vector3(0, distanceUp, 0);
 
-		if (Input.GetAxis("Target") > 0.01f) {
+		if (Input.GetAxis("Target") > targetingThreshold) {
 			barEffect.coverage = Mathf.SmoothStep (barEffect.coverage, widescreen, targetingTime);
 			camState = CamStates.Target;
 		} else {
 			barEffect.coverage = Mathf.SmoothStep (barEffect.coverage, 0f, targetingTime);
-			camState= CamStates.Behind;
+
+			// first person
+			if (lookY > firstPersonThreshold && !follow.IsInLocomotion()) {
+				// reset look before entering firs person mode
+				xAxisRot = 0;
+				lookWeight = 0;
+				camState = CamStates.FirstPerson;
+			}
+
+			if ((camState == CamStates.FirstPerson && Input.GetButton("ExitFPV")) ||
+			    (camState == CamStates.Target && (Input.GetAxis("Target") <= targetingThreshold)))
+			{
+				camState = CamStates.Behind;
+			}
 		}
+
+		follow.Animator.SetLookWeight(lookWeight);
 
 		// calculate look direction based on camera state
 		switch (camState) {
-			case CamStates.Behind:
-				// calculate direction from camera to player, kill Y, normalize
-				lookDir = characterOffset - transform.position;
-				lookDir.y = 0;
-				lookDir.Normalize();
-				break;
-			case CamStates.Target:
-				lookDir = followXForm.forward;
-				break;
+		case CamStates.Behind:
+			// calculate direction from camera to player, kill Y, normalize
+			lookDir = characterOffset - transform.position;
+			lookDir.y = 0;
+			lookDir.Normalize();
+			break;
+		case CamStates.Target:
+			lookDir = followXForm.forward;
+			break;
+		case CamStates.FirstPerson:
+			Debug.Log("fps");
+			break;
 		}
 		targetPosition = characterOffset + followXForm.up * distanceUp - lookDir * distanceAway;
 		CompensateForWalls(characterOffset, ref targetPosition);
